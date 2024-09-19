@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Ventas</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 80%;
+            max-width: 1200px;
+            justify-content: space-between;
+        }
+        .chart-container, .table-container, .line-chart-container {
+            width: 48%;
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chart-container .plotly-graph-div,
+        .line-chart-container .plotly-graph-div {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #555;
+        }
+        th {
+            background-color: #444;
+        }
+        .full-width {
+            width: 100%;
+        }
+        .toggle-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .toggle-buttons button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-buttons button:hover {
+            background-color: #555;
+        }
+        .toggle-buttons button.active {
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visualización de Ventas</h1>
+    <div class="container">
+        <div class="chart-container">
+            <div class="chart-title">Distribución de Ventas y Predicciones por Mes</div>
+            <div id="graficaVentas"></div>
+            <div class="toggle-buttons">
+                <button id="ventas2023" class="active">Ventas 2023</button>
+                <button id="predicciones2024">Predicciones 2024</button>
+            </div>
+        </div>
+        <div class="table-container">
+            <div class="chart-title">Ventas por Mes (2023)</div>
+            <table id="tablaVentas">
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Ventas</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="line-chart-container full-width">
+        <div class="chart-title">Ventas 2023 y Predicciones 2024</div>
+        <div id="lineChart"></div>
+        <div class="toggle-buttons">
+            <button id="ventas2023Line" class="active">Ventas 2023</button>
+            <button id="predicciones2024Line">Predicciones 2024</button>
+            <button id="ambas">Ambas</button>
+        </div>
+    </div>
+    <script>
+        function cargarYGraficar() {
+            Promise.all([
+                fetch('data_2023.json').then(response => response.json()),
+                fetch('predicciones_2024.json').then(response => response.json())
+            ]).then(([data2023, data2024]) => {
+                // Ordenar los datos de 2023
+                const meses2023 = data2023.meses;
+                const precios2023 = data2023.precios;
+
+                const combinedData = meses2023.map((mes, index) => ({
+                    mes,
+                    precio: precios2023[index]
+                }));
+
+                combinedData.sort((a, b) => {
+                    return meses2023.indexOf(a.mes) - meses2023.indexOf(b.mes);
+                });
+
+                const orderedMeses2023 = combinedData.map(data => data.mes);
+                const orderedPrecios2023 = combinedData.map(data => data.precio);
+
+                const meses2024 = Object.keys(data2024);
+                const predicciones2024 = Object.values(data2024);
+
+                // Inicializar el gráfico circular con datos ordenados
+                let currentData = {
+                    labels: orderedMeses2023,
+                    values: orderedPrecios2023,
+                    type: 'pie',
+                    textinfo: 'label+percent',
+                    insidetextorientation: 'radial'
+                };
+
+                const layoutPie = {
+                    title: 'Distribución de Ventas y Predicciones por Mes',
+                    plot_bgcolor: '#222',
+                    paper_bgcolor: '#222',
+                    font: { color: '#fff' }
+                };
+
+                Plotly.newPlot('graficaVentas', [currentData], layoutPie);
+
+                // Rellenar la tabla de ventas
+                const tbody = document.querySelector("#tablaVentas tbody");
+                orderedMeses2023.forEach((mes, index) => {
+                    const row = document.createElement('tr');
+                    const cellMes = document.createElement('td');
+                    cellMes.textContent = mes;
+                    const cellVentas = document.createElement('td');
+                    cellVentas.textContent = orderedPrecios2023[index];
+                    row.appendChild(cellMes);
+                    row.appendChild(cellVentas);
+                    tbody.appendChild(row);
+                });
+
+                // Graficar el gráfico lineal
+                const plotData2023 = {
+                    x: orderedMeses2023,
+                    y: orderedPrecios2023,
+                    type: 'scatter',
+                    mode: 'markers',
+                    name: 'Ventas 2023',
+                    marker: { color: 'blue' }
+                };
+
+                const plotData2024 = {
+                    x: meses2024,
+                    y: predicciones2024,
+                    type: 'scatter',
+                    mode: 'lines+markers',
+                    name: 'Predicciones 2024',
+                    marker: { color: 'red' },
+                    line: { color: 'red' }
+                };
+
+                const layoutLine = {
+                    title: 'Ventas por Mes (2023) y Predicciones para el Año 2024',
+                    xaxis: { title: 'Mes' },
+                    yaxis: { title: 'Ventas' },
+                    plot_bgcolor: '#222',
+                    paper_bgcolor: '#222',
+                    font: { color: '#fff' }
+                };
+
+                Plotly.newPlot('lineChart', [plotData2023, plotData2024], layoutLine);
+
+                // Manejar el cambio de datos en el gráfico circular
+                document.getElementById('ventas2023').addEventListener('click', () => {
+                    currentData = {
+                        labels: orderedMeses2023,
+                        values: orderedPrecios2023,
+                        type: 'pie',
+                        textinfo: 'label+percent',
+                        insidetextorientation: 'radial'
+                    };
+                    Plotly.react('graficaVentas', [currentData], layoutPie);
+                    document.getElementById('ventas2023').classList.add('active');
+                    document.getElementById('predicciones2024').classList.remove('active');
+                });
+
+                document.getElementById('predicciones2024').addEventListener('click', () => {
+                    currentData = {
+                        labels: meses2024,
+                        values: predicciones2024,
+                        type: 'pie',
+                        textinfo: 'label+percent',
+                        insidetextorientation: 'radial'
+                    };
+                    Plotly.react('graficaVentas', [currentData], layoutPie);
+                    document.getElementById('ventas2023').classList.remove('active');
+                    document.getElementById('predicciones2024').classList.add('active');
+                });
+
+                // Manejar el cambio de datos en el gráfico lineal
+                document.getElementById('ventas2023Line').addEventListener('click', () => {
+                    Plotly.react('lineChart', [plotData2023], layoutLine);
+                    document.getElementById('ventas2023Line').classList.add('active');
+                    document.getElementById('predicciones2024Line').classList.remove('active');
+                    document.getElementById('ambas').classList.remove('active');
+                });
+
+                document.getElementById('predicciones2024Line').addEventListener('click', () => {
+                    Plotly.react('lineChart', [plotData2024], layoutLine);
+                    document.getElementById('ventas2023Line').classList.remove('active');
+                    document.getElementById('predicciones2024Line').classList.add('active');
+                    document.getElementById('ambas').classList.remove('active');
+                });
+
+                document.getElementById('ambas').addEventListener('click', () => {
+                    Plotly.react('lineChart', [plotData2023, plotData2024], layoutLine);
+                    document.getElementById('ventas2023Line').classList.remove('active');
+                    document.getElementById('predicciones2024Line').classList.remove('active');
+                    document.getElementById('ambas').classList.add('active');
+                });
+
+            }).catch(error => {
+                console.error('Error al cargar los datos:', error);
+            });
+        }
+
+        cargarYGraficar();
+    </script>
+</body>
+</html>
