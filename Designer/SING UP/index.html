@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up / Log In</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <div class="form-container">
+                <!-- Formulario de Registro -->
+                <form id="signup-form" class="form active">
+                    <h2>Sign up</h2>
+                    <input type="text" placeholder="Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Sign up</button>
+                    <p>or <span class="toggle-form" id="login-toggle">Log in</span></p>
+                </form>
+
+                <!-- Formulario de Inicio de Sesión -->
+                <form id="login-form" class="form">
+                    <h2>Log in</h2>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Log in</button>
+                    <p>or <span class="toggle-form" id="signup-toggle">Sign up</span></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

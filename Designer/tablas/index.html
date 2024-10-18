@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas Totales por País</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ventas Totales por País</h1>
+    <table id="salesTable">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Código País</th>
+                <th>Ventas Totales</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Los datos se agregarán aquí mediante JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        // Cargar datos desde el archivo JSON
+        fetch('\\Data\\ventas_por_pais.json')
+            .then(response => response.json())
+            .then(data => {
+                const salesTableBody = document.getElementById('salesTable').getElementsByTagName('tbody')[0];
+                const maxSales = {};
+
+                // Procesar los datos para encontrar el máximo por mes
+                for (const [countryCode, info] of Object.entries(data)) {
+                    for (let i = 0; i < info.meses.length; i++) {
+                        const month = info.meses[i];
+                        const total = info.totales[i];
+
+                        if (!maxSales[month] || total > maxSales[month].total) {
+                            maxSales[month] = { countryCode, total };
+                        }
+                    }
+                }
+
+                // Agregar los máximos a la tabla
+                for (const [month, info] of Object.entries(maxSales)) {
+                    const row = salesTableBody.insertRow();
+                    row.insertCell(0).textContent = month;
+                    row.insertCell(1).textContent = info.countryCode;
+                    row.insertCell(2).textContent = info.total.toLocaleString(); // Formatear el total
+                }
+            })
+            .catch(error => console.error('Error al cargar el archivo JSON:', error));
+    </script>
+</body>
+</html>

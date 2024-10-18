@@ -1,6 +1,6 @@
 import os
 
-file_path = r'C:\Users\Lenovo\Documents\FA_CAFAC.csv'
+file_path = r'C:\Users\Lenovo\Documents\FA_CAFAC_cod_pais_modificado.xlsx'
 
 # Verifica si el archivo existe
 if os.path.exists(file_path):

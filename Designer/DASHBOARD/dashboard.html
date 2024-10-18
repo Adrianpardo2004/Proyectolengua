@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="SING%20UP/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Grafico">
+            <span>Grafico</span>
+        </div>
+        <nav class="nav">
+            <ul>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Gráficos</a></li>
+                <li><a href="#">Ventas</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+        <div class="user-options">
+            <a href="#">Customize your dashboard</a>
+            <button class="filter-btn">Filter</button>
+            <div class="user-profile">
+                <img src="user.jpg" alt="User">
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="summary-cards">
+            <div class="card">
+                <p>Inventory Summary</p>
+                <h2>Total Items</h2>
+                <span>1,345</span>
+                <a href="#">View detail ></a>
+            </div>
+            <div class="card">
+                <p>Low-Stock Alerts</p>
+                <h2>12</h2>
+                <a href="#">View detail ></a>
+            </div>
+            <div class="card">
+                <p>Sales Activities</p>
+                <h2>To be delivered</h2>
+                <span>200</span>
+                <a href="#">View detail ></a>
+            </div>
+            <div class="card">
+                <p>To be ordered</p>
+                <h2>120</h2>
+                <a href="#">View detail ></a>
+            </div>
+        </section>
+
+        <section class="plans-warehouse">
+            <div class="month-plans">
+                <h3>Mounth Plans</h3>
+                <ul>
+                    <li><span>Enero</span><span>1 product</span><span>Todo</span></li>
+                    <li><span>Noviembre</span><span>50 products</span><span>Processing</span></li>
+                    <li><span>Diciembre</span><span>50 products</span><span>Completed</span></li>
+                </ul>
+            </div>
+
+            <div class="warehouse-detail">
+                <h3>Warehouse Detail</h3>
+                <p>Total Items</p>
+                <h2>1,345</h2>
+                <div class="chart">
+                    <!-- Aquí iría la imagen del gráfico circular -->
+                    <img src="chart.png" alt="Warehouse Chart">
+                </div>
+                <ul>
+                    <li><span>enero a junio</span><span>1,000 items</span></li>
+                    <li><span>Julio a diciembre</span><span>345 items</span></li>
+                </ul>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
